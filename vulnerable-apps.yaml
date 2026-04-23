@@ -4,20 +4,34 @@ kind: Deployment
 metadata:
   name: dvwa
   namespace: tenable-lab
+  labels:
+    app: dvwa
+    app.kubernetes.io/part-of: tenable-lab
 spec:
   replicas: 1
   selector: { matchLabels: { app: dvwa } }
   template:
-    metadata: { labels: { app: dvwa } }
+    metadata:
+      labels:
+        app: dvwa
+        app.kubernetes.io/part-of: tenable-lab
     spec:
       containers:
       - name: dvwa
         image: vulnerables/web-dvwa:latest
         ports: [{ containerPort: 80 }]
+        resources:
+          requests: { memory: "128Mi", cpu: "50m"  }
+          limits:   { memory: "512Mi", cpu: "300m" }
 ---
 apiVersion: v1
 kind: Service
-metadata: { name: dvwa, namespace: tenable-lab }
+metadata:
+  name: dvwa
+  namespace: tenable-lab
+  labels:
+    app: dvwa
+    app.kubernetes.io/part-of: tenable-lab
 spec:
   selector: { app: dvwa }
   ports: [{ port: 80, targetPort: 80 }]
@@ -28,20 +42,34 @@ kind: Deployment
 metadata:
   name: juice-shop
   namespace: tenable-lab
+  labels:
+    app: juice-shop
+    app.kubernetes.io/part-of: tenable-lab
 spec:
   replicas: 1
   selector: { matchLabels: { app: juice-shop } }
   template:
-    metadata: { labels: { app: juice-shop } }
+    metadata:
+      labels:
+        app: juice-shop
+        app.kubernetes.io/part-of: tenable-lab
     spec:
       containers:
       - name: juice-shop
         image: bkimminich/juice-shop:latest
         ports: [{ containerPort: 3000 }]
+        resources:
+          requests: { memory: "256Mi", cpu: "100m" }
+          limits:   { memory: "768Mi", cpu: "500m" }
 ---
 apiVersion: v1
 kind: Service
-metadata: { name: juice-shop, namespace: tenable-lab }
+metadata:
+  name: juice-shop
+  namespace: tenable-lab
+  labels:
+    app: juice-shop
+    app.kubernetes.io/part-of: tenable-lab
 spec:
   selector: { app: juice-shop }
   ports: [{ port: 3000, targetPort: 3000 }]
@@ -52,11 +80,17 @@ kind: Deployment
 metadata:
   name: webgoat
   namespace: tenable-lab
+  labels:
+    app: webgoat
+    app.kubernetes.io/part-of: tenable-lab
 spec:
   replicas: 1
   selector: { matchLabels: { app: webgoat } }
   template:
-    metadata: { labels: { app: webgoat } }
+    metadata:
+      labels:
+        app: webgoat
+        app.kubernetes.io/part-of: tenable-lab
     spec:
       containers:
       - name: webgoat
@@ -64,10 +98,18 @@ spec:
         ports:
         - { containerPort: 8080 }
         - { containerPort: 9090 }
+        resources:
+          requests: { memory: "512Mi", cpu: "200m"  }
+          limits:   { memory: "1Gi",   cpu: "1000m" }
 ---
 apiVersion: v1
 kind: Service
-metadata: { name: webgoat, namespace: tenable-lab }
+metadata:
+  name: webgoat
+  namespace: tenable-lab
+  labels:
+    app: webgoat
+    app.kubernetes.io/part-of: tenable-lab
 spec:
   selector: { app: webgoat }
   ports:
@@ -80,20 +122,34 @@ kind: Deployment
 metadata:
   name: bwapp
   namespace: tenable-lab
+  labels:
+    app: bwapp
+    app.kubernetes.io/part-of: tenable-lab
 spec:
   replicas: 1
   selector: { matchLabels: { app: bwapp } }
   template:
-    metadata: { labels: { app: bwapp } }
+    metadata:
+      labels:
+        app: bwapp
+        app.kubernetes.io/part-of: tenable-lab
     spec:
       containers:
       - name: bwapp
         image: raesene/bwapp:latest
         ports: [{ containerPort: 80 }]
+        resources:
+          requests: { memory: "128Mi", cpu: "50m"  }
+          limits:   { memory: "512Mi", cpu: "300m" }
 ---
 apiVersion: v1
 kind: Service
-metadata: { name: bwapp, namespace: tenable-lab }
+metadata:
+  name: bwapp
+  namespace: tenable-lab
+  labels:
+    app: bwapp
+    app.kubernetes.io/part-of: tenable-lab
 spec:
   selector: { app: bwapp }
   ports: [{ port: 80, targetPort: 80 }]

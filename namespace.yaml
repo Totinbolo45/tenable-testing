@@ -4,3 +4,4 @@ metadata:
   name: tenable-lab
   labels:
     purpose: vulnerability-testing
+    app.kubernetes.io/part-of: tenable-lab
