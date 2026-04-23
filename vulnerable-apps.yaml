@@ -1,0 +1,99 @@
+# DVWA
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dvwa
+  namespace: tenable-lab
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: dvwa } }
+  template:
+    metadata: { labels: { app: dvwa } }
+    spec:
+      containers:
+      - name: dvwa
+        image: vulnerables/web-dvwa:latest
+        ports: [{ containerPort: 80 }]
+---
+apiVersion: v1
+kind: Service
+metadata: { name: dvwa, namespace: tenable-lab }
+spec:
+  selector: { app: dvwa }
+  ports: [{ port: 80, targetPort: 80 }]
+---
+# OWASP Juice Shop
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: juice-shop
+  namespace: tenable-lab
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: juice-shop } }
+  template:
+    metadata: { labels: { app: juice-shop } }
+    spec:
+      containers:
+      - name: juice-shop
+        image: bkimminich/juice-shop:latest
+        ports: [{ containerPort: 3000 }]
+---
+apiVersion: v1
+kind: Service
+metadata: { name: juice-shop, namespace: tenable-lab }
+spec:
+  selector: { app: juice-shop }
+  ports: [{ port: 3000, targetPort: 3000 }]
+---
+# WebGoat
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webgoat
+  namespace: tenable-lab
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: webgoat } }
+  template:
+    metadata: { labels: { app: webgoat } }
+    spec:
+      containers:
+      - name: webgoat
+        image: webgoat/goatandwolf:latest
+        ports:
+        - { containerPort: 8080 }
+        - { containerPort: 9090 }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: webgoat, namespace: tenable-lab }
+spec:
+  selector: { app: webgoat }
+  ports:
+  - { name: goat, port: 8080, targetPort: 8080 }
+  - { name: wolf, port: 9090, targetPort: 9090 }
+---
+# bWAPP
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bwapp
+  namespace: tenable-lab
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: bwapp } }
+  template:
+    metadata: { labels: { app: bwapp } }
+    spec:
+      containers:
+      - name: bwapp
+        image: raesene/bwapp:latest
+        ports: [{ containerPort: 80 }]
+---
+apiVersion: v1
+kind: Service
+metadata: { name: bwapp, namespace: tenable-lab }
+spec:
+  selector: { app: bwapp }
+  ports: [{ port: 80, targetPort: 80 }]
