@@ -3,6 +3,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: nessus-data
   namespace: tenable-lab
+  labels:
+    app.kubernetes.io/part-of: tenable-lab
 spec:
   accessModes: [ReadWriteOnce]
   resources:
@@ -14,33 +16,52 @@ kind: Deployment
 metadata:
   name: nessus
   namespace: tenable-lab
+  labels:
+    app: nessus
+    app.kubernetes.io/part-of: tenable-lab
 spec:
   replicas: 1
   strategy: { type: Recreate }
   selector: { matchLabels: { app: nessus } }
   template:
-    metadata: { labels: { app: nessus } }
+    metadata:
+      labels:
+        app: nessus
+        app.kubernetes.io/part-of: tenable-lab
     spec:
       containers:
       - name: nessus
         image: tenable/nessus:latest-ubuntu
         ports: [{ containerPort: 8834 }]
         env:
-        - { name: USERNAME,        value: "admin" }
-        - { name: PASSWORD,        value: "ChangeMe123!" }
-        - { name: ACTIVATION_CODE, value: "TU-CODIGO-AQUI" }
+        - name: USERNAME
+          valueFrom:
+            secretKeyRef: { name: nessus-credentials, key: username }
+        - name: PASSWORD
+          valueFrom:
+            secretKeyRef: { name: nessus-credentials, key: password }
+        - name: ACTIVATION_CODE
+          valueFrom:
+            secretKeyRef: { name: nessus-credentials, key: activation-code }
         resources:
           requests: { memory: "2Gi", cpu: "1000m" }
           limits:   { memory: "4Gi", cpu: "2000m" }
         volumeMounts:
-        - { name: data, mountPath: /opt/nessus }
+        # IMPORTANT: mount only on the data subdirectory to avoid shadowing
+        # the Nessus binaries and configuration shipped in the image.
+        - { name: data, mountPath: /opt/nessus/var/nessus }
       volumes:
       - name: data
         persistentVolumeClaim: { claimName: nessus-data }
 ---
 apiVersion: v1
 kind: Service
-metadata: { name: nessus, namespace: tenable-lab }
+metadata:
+  name: nessus
+  namespace: tenable-lab
+  labels:
+    app: nessus
+    app.kubernetes.io/part-of: tenable-lab
 spec:
   type: NodePort
   selector: { app: nessus }
